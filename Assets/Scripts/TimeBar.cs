@@ -6,8 +6,8 @@ using System.Collections;
 
 public class TimeBar : MonoBehaviour
 {
-    private const int maxSeconds = 30;
-    private int currentSeconds;
+    internal int maxSeconds = 30;
+    internal int currentSeconds;
 
     private IEnumerator coroutine;
     private Text secondsText;

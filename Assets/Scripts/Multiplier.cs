@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class Multiplier : MonoBehaviour
 {
-    internal const byte MAX_MULTIPLIER = 4;
-    private byte currentMultiplier;
+    internal byte MAX_MULTIPLIER = 4;
+    internal byte currentMultiplier;
 
     private Text multiplierText;
 

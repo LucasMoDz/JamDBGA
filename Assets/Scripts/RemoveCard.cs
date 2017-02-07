@@ -9,7 +9,7 @@ public class RemoveCard : MonoBehaviour
     private Multiplier multiplier;
     private TimeBar timeBar;
 
-    private bool isFirstCard = true;
+    internal bool isFirstCard = true;
 
     private void Awake()
     {
