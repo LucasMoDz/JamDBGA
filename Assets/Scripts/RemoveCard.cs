@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 
 public class RemoveCard : MonoBehaviour
 {
+    private Text myText;
+
     private GameManager gameManager;
     private RemoveCard removeCardButton;
 
@@ -27,6 +31,8 @@ public class RemoveCard : MonoBehaviour
         
         if (cardsParent == null)
             Debug.LogError("\"Cards\" not found\n");
+
+        myText = this.GetComponentInChildren<Text>();
 
         InitialiseList();
     }
@@ -72,6 +78,44 @@ public class RemoveCard : MonoBehaviour
             int randomIndex = Random.Range(0, cardList.Count);
             cardList[randomIndex].gameObject.SetActive(false);
             cardList.RemoveAt(randomIndex);
+        }
+
+        myText.text = "Break";
+    }
+
+    public void SetText()
+    {
+        myText.text = "Next";
+
+        StartCoroutine(SetTextCO(myText));
+    }
+
+    private IEnumerator SetTextCO(Text _text)
+    {
+        float step = 0;
+
+        int randomValue = Random.Range(1, 101);
+
+        Quaternion currentRotation = _text.transform.rotation;
+        Quaternion targetRotation = currentRotation * new Quaternion(0, 0, randomValue > 50 ? 0.2f : -0.2f, 1);
+
+        Vector3 currentScale = Vector3.one;
+        Vector3 targetScale = new Vector3(1.5f, 1.5f, 1.5f);
+
+        while (step < 1)
+        {
+            step += Time.deltaTime / 1.5f;
+            _text.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, step);
+            _text.transform.localScale = Vector3.Lerp(currentScale, targetScale, step);
+            yield return null;
+        }
+
+        while (step > 0)
+        {
+            step -= Time.deltaTime / 0.5f;
+            _text.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, step);
+            _text.transform.localScale = Vector3.Lerp(currentScale, targetScale, step);
+            yield return null;
         }
     }
 

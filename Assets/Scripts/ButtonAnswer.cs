@@ -254,6 +254,8 @@ public class ButtonAnswer : MonoBehaviour
 
         #endregion
 
+        sbangButton.SetText();
+
         yield return new WaitUntil(Skip);
 
         // Reset current score, multipier and seconds
