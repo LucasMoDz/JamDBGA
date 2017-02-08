@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class RemoveCard : MonoBehaviour
 {
     private GameManager gameManager;
+    private RemoveCard removeCardButton;
 
     public List<GameObject> cardList = new List<GameObject>();
     private GameObject cardsParent;
@@ -14,7 +15,7 @@ public class RemoveCard : MonoBehaviour
     internal bool canSkip;
     internal bool skip;
 
-    internal bool isFirstCard = true;
+    internal bool isClicked = true;
 
     private void Awake()
     {
@@ -43,10 +44,13 @@ public class RemoveCard : MonoBehaviour
 
         multiplier.ResetCurrentMultiplier();
 
-        foreach (var card in cardList)
-            card.SetActive(true);
-
-        isFirstCard = true;
+        if (!gameManager.isLastImage)
+        {
+            foreach (var card in cardList)
+                card.SetActive(true);
+        }
+        
+        isClicked = true;
     }
     
     public void RemovingCard()
@@ -56,9 +60,9 @@ public class RemoveCard : MonoBehaviour
 
         else if (cardList.Count > 1 && !gameManager.feedbackIsActive)
         {
-            if (isFirstCard)
+            if (isClicked)
             {
-                isFirstCard = false;
+                isClicked = false;
                 ResetSkip();
                 timeBar.StartTimeBar();
             }

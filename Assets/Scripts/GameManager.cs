@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
     private ButtonAnswer[] buttonAnswers = new ButtonAnswer[6];
-
+    private CanvasGroup canvasGroup;
     private Image image;
 
-    private byte index = 0;
+    private RemoveCard removeCardButton;
+
+    internal byte index = 0;
     internal bool feedbackIsActive = false;
+    internal bool isLastImage;
 
     public NewPhase[] gamePhase;
     
@@ -16,13 +20,20 @@ public class GameManager : MonoBehaviour
     public struct NewPhase
     {
         public Sprite image;
+        
+        public Button button1;
+        public Button button2;
+        public Button button3;
+        public Button button4;
+        public Button button5;
+        public Button button6;
+    }
 
-        public int scoreA;
-        public int scoreB;
-        public int scoreC;
-        public int scoreD;
-        public int scoreE;
-        public int scoreF;
+    [System.Serializable]
+    public struct Button
+    {
+        public int score;
+        public string text;
     }
 
     private void Awake()
@@ -36,19 +47,61 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < answers.childCount; i++)
             buttonAnswers[i] = answers.GetChild(i).GetComponent<ButtonAnswer>();
+
+        canvasGroup = GameObject.FindGameObjectWithTag("MainCanvas").transform.FindChild("WhiteImage").GetComponent<CanvasGroup>();
+
+        if (canvasGroup == null)
+            Debug.Log("CanvasGroup not found");
+
+        removeCardButton = FindObjectOfType<RemoveCard>();
+
+        IncreasePhase();
     }
 
     public void IncreasePhase()
     {
-        image.sprite = gamePhase[index].image;
+        if (index == gamePhase.Length)
+            FinalGame();
+        else
+        {
+            image.sprite = gamePhase[index].image;
 
-        buttonAnswers[0].score = gamePhase[index].scoreA;
-        buttonAnswers[1].score = gamePhase[index].scoreB;
-        buttonAnswers[2].score = gamePhase[index].scoreC;
-        buttonAnswers[3].score = gamePhase[index].scoreD;
-        buttonAnswers[4].score = gamePhase[index].scoreE;
-        buttonAnswers[5].score = gamePhase[index].scoreF;
+            buttonAnswers[0].score = gamePhase[index].button1.score;
+            buttonAnswers[1].score = gamePhase[index].button2.score;
+            buttonAnswers[2].score = gamePhase[index].button3.score; 
+            buttonAnswers[3].score = gamePhase[index].button4.score;
+            buttonAnswers[4].score = gamePhase[index].button5.score; 
+            buttonAnswers[5].score = gamePhase[index].button6.score; 
 
-        index++;
+            buttonAnswers[0].transform.GetComponentInChildren<Text>().text = gamePhase[index].button1.text;
+            buttonAnswers[1].transform.GetComponentInChildren<Text>().text = gamePhase[index].button2.text;
+            buttonAnswers[2].transform.GetComponentInChildren<Text>().text = gamePhase[index].button3.text;
+            buttonAnswers[3].transform.GetComponentInChildren<Text>().text = gamePhase[index].button4.text;
+            buttonAnswers[4].transform.GetComponentInChildren<Text>().text = gamePhase[index].button5.text;
+            buttonAnswers[5].transform.GetComponentInChildren<Text>().text = gamePhase[index].button6.text;
+
+            index++;
+        }
+    }
+
+    private void FinalGame()
+    {
+        StartCoroutine(FinalGameCO());
+
+        isLastImage = true;
+        Debug.Log("Finito");
+    }
+
+    private IEnumerator FinalGameCO()
+    {
+        canvasGroup.blocksRaycasts = true;
+
+        while (canvasGroup.alpha < 1)
+        {
+            canvasGroup.alpha += Time.deltaTime / 1.5f;
+            yield return null;
+        }
+
+        canvasGroup.alpha = 1;
     }
 }

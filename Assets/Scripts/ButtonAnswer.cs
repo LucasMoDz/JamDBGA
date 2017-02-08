@@ -41,16 +41,16 @@ public class ButtonAnswer : MonoBehaviour
 
     public void AcceptAnswer()
     {
-        if (gameManager.feedbackIsActive || sbangButton.isFirstCard)
+        if (gameManager.feedbackIsActive || sbangButton.isClicked)
             return;
 
         gameManager.feedbackIsActive = true;
         timeBarText.StopTimer();
 
-        StartCoroutine(ScorePhaseCO(0.8f));
+        StartCoroutine(FirstFadeCO(0.8f));
     }
 
-    private IEnumerator ScorePhaseCO(float _seconds)
+    private IEnumerator FirstFadeCO(float _seconds)
     {
         #region Fading score
 
@@ -71,6 +71,42 @@ public class ButtonAnswer : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(_seconds);
 
+        #region Choose coroutine
+
+        if (score.Equals(0))
+        {
+            StartCoroutine(TimeFinishedCO(0.5f));
+            multiplierText.GetComponent<Text>().text = "x 0";
+        }
+        else
+            StartCoroutine(AcceptAnswerCO(0.5f));
+
+        #endregion
+    }
+
+    private IEnumerator TimeFinishedCO(float _seconds)
+    {
+        #region Score button moves to current score
+
+        Vector3 currentPositionOfText = buttonScoreText.transform.position;
+        float step = 0;
+
+        while (step < 1)
+        {
+            step += Time.deltaTime / 1.5f;
+            buttonScoreText.transform.position = Vector2.Lerp(currentPositionOfText, totalScoreText.transform.position, step);
+            yield return null;
+        }
+        
+        buttonScoreText.text = "";
+        
+        #endregion
+
+        StartCoroutine(FinalPhaseCO());
+    }
+
+    private IEnumerator AcceptAnswerCO(float _seconds)
+    {
         #region Score button moves to current score
 
         Vector3 currentPositionOfText = buttonScoreText.transform.position;
@@ -155,6 +191,11 @@ public class ButtonAnswer : MonoBehaviour
 
         #endregion
 
+        StartCoroutine(FinalPhaseCO());
+    }
+
+    private IEnumerator FinalPhaseCO()
+    {
         #region Fading covered images
 
         for (int i = 0; i < sbangButton.cardList.Count; i++)
@@ -163,10 +204,10 @@ public class ButtonAnswer : MonoBehaviour
         #endregion
 
         yield return new WaitUntil(Skip);
-        
+
         // Reset current score, multipier and seconds
         ResetCurrentVariables();
-
+        
         // Change image and buttons scores
         gameManager.IncreasePhase();
 

@@ -4,8 +4,8 @@ using System.Collections;
 
 public class TimeBar : MonoBehaviour
 {
-    internal int maxSeconds = 30;
-    public int currentSeconds;
+    public int maxSeconds = 30;
+    internal int currentSeconds;
 
     private IEnumerator coroutine;
     private Text secondsText;
