@@ -127,6 +127,7 @@ public class RemoveCard : MonoBehaviour
             yield return null;
         }
 
+        gameManager.feedbackIsActive = false;
         myText.text = "Break";
     }
 

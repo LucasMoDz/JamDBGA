@@ -104,4 +104,40 @@ public class GameManager : MonoBehaviour
 
         canvasGroup.alpha = 1;
     }
+
+    internal void ColorAllButtons()
+    {
+        for (int i = 0; i < buttonAnswers.Length; i++)
+            StartCoroutine(ColorButtonCO(buttonAnswers[i]));
+    }
+
+    private IEnumerator ColorButtonCO(ButtonAnswer _buttonAnswer)
+    {
+        yield return new WaitForSecondsRealtime(0.8f);
+
+        Color newColor = Color.white;
+
+        if (_buttonAnswer.score.Equals(0))
+            newColor = Color.red;
+        else if (_buttonAnswer.score.Equals(5))
+            newColor = Color.yellow;
+        else if (_buttonAnswer.score.Equals(10))
+            newColor = Color.green;
+
+        Image buttonImage = _buttonAnswer.GetComponent<Image>();
+        Color startColor = buttonImage.color;
+
+        buttonImage.color = newColor;
+
+        yield return new WaitForSecondsRealtime(3f);
+
+        float step = 0;
+
+        while (step < 1)
+        {
+            step += Time.deltaTime / 2;
+            buttonImage.color = Color.Lerp(newColor, startColor, step);
+            yield return null;
+        }
+    }
 }

@@ -45,6 +45,8 @@ public class ButtonAnswer : MonoBehaviour
             return;
 
         gameManager.feedbackIsActive = true;
+        gameManager.ColorAllButtons();
+
         timeBarText.StopTimer();
 
         StartCoroutine(FirstFadeCO(0.8f));
@@ -296,8 +298,6 @@ public class ButtonAnswer : MonoBehaviour
 
     private void ResetCurrentVariables()
     {
-        gameManager.feedbackIsActive = false;
-
         currentScoreText.currentScore = 0;
         currentScoreText.GetComponent<Text>().text = currentScoreText.currentScore.ToString();
         
