@@ -14,7 +14,10 @@ public class PingPongScore : MonoBehaviour
     {
         myText = this.GetComponent<Text>();
         refScore = FindObjectOfType<TotalScore>();
+    }
 
+    internal void SetFinalScore()
+    {
         myText.text = refScore.totalScore.ToString();
     }
 

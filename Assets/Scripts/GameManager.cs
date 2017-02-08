@@ -92,6 +92,9 @@ public class GameManager : MonoBehaviour
 
         isLastImage = true;
         Debug.Log("Finito");
+
+        finalScoreText.text = FindObjectOfType<TotalScore>().totalScore.ToString();
+        GameObject.Find("Btn_BackGame").SetActive(false);
     }
 
     private IEnumerator FinalGameCO()
