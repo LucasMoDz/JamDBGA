@@ -4,6 +4,8 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+    public Text finalScoreText;
+
     private ButtonAnswer[] buttonAnswers = new ButtonAnswer[6];
     private CanvasGroup canvasGroup;
     private Image image;
@@ -38,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        image = GameObject.Find("Image").GetComponent<Image>();
+        image = GameObject.FindGameObjectWithTag("Image").GetComponent<Image>();
 
         if (image == null)
             Debug.LogError("Image not found");
@@ -48,7 +50,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < answers.childCount; i++)
             buttonAnswers[i] = answers.GetChild(i).GetComponent<ButtonAnswer>();
 
-        canvasGroup = GameObject.FindGameObjectWithTag("MainCanvas").transform.FindChild("WhiteImage").GetComponent<CanvasGroup>();
+        canvasGroup = GameObject.FindGameObjectWithTag("Fade").GetComponent<CanvasGroup>();
 
         if (canvasGroup == null)
             Debug.Log("CanvasGroup not found");
@@ -96,13 +98,13 @@ public class GameManager : MonoBehaviour
     {
         canvasGroup.blocksRaycasts = true;
 
-        while (canvasGroup.alpha < 1)
+        while (canvasGroup.alpha < 0.9f)
         {
             canvasGroup.alpha += Time.deltaTime / 1.5f;
             yield return null;
         }
 
-        canvasGroup.alpha = 1;
+        canvasGroup.alpha = 0.9f;
     }
 
     internal void ColorAllButtons()
