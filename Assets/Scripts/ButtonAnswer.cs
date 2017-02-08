@@ -68,8 +68,15 @@ public class ButtonAnswer : MonoBehaviour
         #region Fading score
 
         buttonScoreText.text = score.ToString();
-        buttonScoreText.color = new Color(0, 1, 0, 0);
-        buttonScoreText.transform.position = sbangButton.transform.position + new Vector3(0, 70f, 0); ;
+
+        if (score.Equals(0))
+            buttonScoreText.color = new Color(1, 0, 0, 0);
+        else if (score.Equals(5))
+            buttonScoreText.color = new Color(1, 0.92f, 0.016f, 0);
+        else if (score.Equals(10))
+            buttonScoreText.color = new Color(0, 1, 0, 0);
+
+        buttonScoreText.transform.position = sbangButton.transform.position + new Vector3(0, 25f, 0); ;
 
         Color newColor = buttonScoreText.color;
 
@@ -108,8 +115,15 @@ public class ButtonAnswer : MonoBehaviour
         #region Fading score
 
         buttonScoreText.text = score.ToString();
-        buttonScoreText.color = new Color(0, 1, 0, 0);
-        buttonScoreText.transform.position = this.transform.position + new Vector3(0, 70f, 0);
+
+        if (score.Equals(0))
+            buttonScoreText.color = new Color(1, 0, 0, 0);
+        else if (score.Equals(5))
+            buttonScoreText.color = new Color(1, 0.92f, 0.016f, 0);
+        else if (score.Equals(10))
+            buttonScoreText.color = new Color(0, 1, 0, 0);
+
+        buttonScoreText.transform.position = this.transform.position + new Vector3(0, 25f, 0);
 
         Color newColor = buttonScoreText.color;
 
