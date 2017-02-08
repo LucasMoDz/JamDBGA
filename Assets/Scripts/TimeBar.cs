@@ -2,12 +2,10 @@
 using UnityEngine.UI;
 using System.Collections;
 
-//TODO: ARRAY DI STRUCT CON IMMAGINE E VALORI BOTTONI
-
 public class TimeBar : MonoBehaviour
 {
     internal int maxSeconds = 30;
-    internal int currentSeconds;
+    public int currentSeconds;
 
     private IEnumerator coroutine;
     private Text secondsText;
@@ -27,7 +25,6 @@ public class TimeBar : MonoBehaviour
     public void StopTimer()
     {
         StopCoroutine(coroutine);
-        currentSeconds = 30;
     }
 
     private IEnumerator TimeBarCO()

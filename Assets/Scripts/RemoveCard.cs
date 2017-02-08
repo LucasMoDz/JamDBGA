@@ -3,16 +3,23 @@ using System.Collections.Generic;
 
 public class RemoveCard : MonoBehaviour
 {
+    private GameManager gameManager;
+
     public List<GameObject> cardList = new List<GameObject>();
     private GameObject cardsParent;
 
     private Multiplier multiplier;
     private TimeBar timeBar;
 
+    internal bool canSkip;
+    internal bool skip;
+
     internal bool isFirstCard = true;
 
     private void Awake()
     {
+        gameManager = FindObjectOfType<GameManager>();
+
         cardsParent = GameObject.Find("Cards");
         multiplier = FindObjectOfType<Multiplier>();
         timeBar = FindObjectOfType<TimeBar>();
@@ -41,29 +48,32 @@ public class RemoveCard : MonoBehaviour
 
         isFirstCard = true;
     }
-
-    // TO TEST
-    public void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            ResetList();
-    }
-
+    
     public void RemovingCard()
     {
-        if (cardList.Count == 0)
-            return;
+        if (gameManager.feedbackIsActive && canSkip)
+            skip = true;
 
-        if (isFirstCard)
+        else if (cardList.Count > 1 && !gameManager.feedbackIsActive)
         {
-            isFirstCard = false;
-            timeBar.StartTimeBar();
-        }
-        else
-            multiplier.DecreaseMultiplier();
+            if (isFirstCard)
+            {
+                isFirstCard = false;
+                ResetSkip();
+                timeBar.StartTimeBar();
+            }
+            else
+                multiplier.DecreaseMultiplier();
 
-        int randomIndex = Random.Range(0, cardList.Count);
-        cardList[randomIndex].gameObject.SetActive(false);
-        cardList.RemoveAt(randomIndex);
+            int randomIndex = Random.Range(0, cardList.Count);
+            cardList[randomIndex].gameObject.SetActive(false);
+            cardList.RemoveAt(randomIndex);
+        }
+    }
+
+    private void ResetSkip()
+    {
+        canSkip = false;
+        skip = false;
     }
 }

@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     [System.Serializable]
     public struct NewPhase
     {
-        public Image image;
+        public Sprite image;
 
         public int scoreA;
         public int scoreB;
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     public void IncreasePhase()
     {
-        image.sprite = gamePhase[index].image.sprite;
+        image.sprite = gamePhase[index].image;
 
         buttonAnswers[0].score = gamePhase[index].scoreA;
         buttonAnswers[1].score = gamePhase[index].scoreB;

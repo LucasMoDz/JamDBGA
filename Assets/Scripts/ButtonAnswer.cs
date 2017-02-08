@@ -8,19 +8,21 @@ public class ButtonAnswer : MonoBehaviour
     
     private Text buttonScoreText;
     private Vector3 startPositionOfButtonText;
+    
+    private GameManager gameManager;
 
     private RemoveCard sbangButton;
-
-    private GameManager gameManager;
 
     private CurrentScore currentScoreText;
     private Multiplier multiplierText;
     private TimeBar timeBarText;
 
     private TotalScore totalScoreText;
-
+    
     private void Awake()
     {
+        #region References
+
         buttonScoreText = GameObject.Find("ButtonScore").GetComponent<Text>();
         startPositionOfButtonText = buttonScoreText.transform.position;
 
@@ -33,30 +35,29 @@ public class ButtonAnswer : MonoBehaviour
         timeBarText = FindObjectOfType<TimeBar>();
 
         totalScoreText = FindObjectOfType<TotalScore>();
+
+        #endregion
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-            ScorePhase();
-    }
-
-    public void ScorePhase()
+    public void AcceptAnswer()
     {
         if (gameManager.feedbackIsActive || sbangButton.isFirstCard)
             return;
 
         gameManager.feedbackIsActive = true;
+        timeBarText.StopTimer();
+
+        StartCoroutine(ScorePhaseCO(0.8f));
+    }
+
+    private IEnumerator ScorePhaseCO(float _seconds)
+    {
+        #region Fading score
 
         buttonScoreText.text = score.ToString();
         buttonScoreText.color = new Color(0, 1, 0, 0);
         buttonScoreText.transform.position = this.transform.position + new Vector3(0, 21f, 0);
 
-        StartCoroutine(ScorePhaseCO());
-    }
-
-    private IEnumerator ScorePhaseCO()
-    {
         Color newColor = buttonScoreText.color;
 
         while (newColor.a < 1)
@@ -66,14 +67,18 @@ public class ButtonAnswer : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSecondsRealtime(1);
+        #endregion  
+
+        yield return new WaitForSecondsRealtime(_seconds);
+
+        #region Score button moves to current score
 
         Vector3 currentPositionOfText = buttonScoreText.transform.position;
         float step = 0;
 
-        while ((currentScoreText.transform.position - buttonScoreText.transform.position).sqrMagnitude > 0.1f)
+        while (step < 1)
         {
-            step += Time.deltaTime / 2;
+            step += Time.deltaTime / 1.5f;
             buttonScoreText.transform.position = Vector2.Lerp(currentPositionOfText, currentScoreText.transform.position, step);
             yield return null;
         }
@@ -82,14 +87,18 @@ public class ButtonAnswer : MonoBehaviour
         currentScoreText.GetComponent<Text>().text = currentScoreText.currentScore.ToString();
         buttonScoreText.text = "";
 
-        yield return new WaitForSecondsRealtime(1);
+        #endregion
+
+        yield return new WaitForSecondsRealtime(_seconds);
+
+        #region Multiplier moves to current score
 
         buttonScoreText.text = multiplierText.GetComponent<Text>().text;
         buttonScoreText.transform.position = multiplierText.transform.position;
 
         step = 0;
 
-        while ((currentScoreText.transform.position - buttonScoreText.transform.position).sqrMagnitude > 0.1f)
+        while (step < 1)
         {
             step += Time.deltaTime;
             buttonScoreText.transform.position = Vector2.Lerp(multiplierText.transform.position, currentScoreText.transform.position, step);
@@ -100,16 +109,20 @@ public class ButtonAnswer : MonoBehaviour
         currentScoreText.GetComponent<Text>().text = currentScoreText.currentScore.ToString();
         buttonScoreText.text = "";
 
-        yield return new WaitForSecondsRealtime(1);
+        #endregion
 
-        buttonScoreText.text = timeBarText.currentSeconds.ToString();
+        yield return new WaitForSecondsRealtime(_seconds);
+
+        #region Time score moves to current score
+
+        buttonScoreText.text = "+ " + timeBarText.currentSeconds.ToString();
         buttonScoreText.transform.position = timeBarText.transform.position;
 
         step = 0;
 
         while (step < 1)
         {
-            step += Time.deltaTime / 2;
+            step += Time.deltaTime / 1.5f;
             buttonScoreText.transform.position = Vector2.Lerp(timeBarText.transform.position, currentScoreText.transform.position, step);
             yield return null;
         }
@@ -118,7 +131,11 @@ public class ButtonAnswer : MonoBehaviour
         currentScoreText.GetComponent<Text>().text = currentScoreText.currentScore.ToString();
         buttonScoreText.text = "";
 
-        yield return new WaitForSecondsRealtime(1);
+        #endregion
+
+        yield return new WaitForSecondsRealtime(_seconds);
+
+        #region Current score moves to total score
 
         buttonScoreText.text = currentScoreText.currentScore.ToString();
         buttonScoreText.transform.position = currentScoreText.transform.position;
@@ -136,13 +153,57 @@ public class ButtonAnswer : MonoBehaviour
         totalScoreText.GetComponent<Text>().text = totalScoreText.totalScore.ToString();
         buttonScoreText.text = "";
 
-        gameManager.feedbackIsActive = false;
+        #endregion
 
+        #region Fading covered images
+
+        for (int i = 0; i < sbangButton.cardList.Count; i++)
+            StartCoroutine(FadingCoveredImages(sbangButton.cardList[i].GetComponent<Image>()));
+
+        #endregion
+
+        yield return new WaitUntil(Skip);
+        
+        // Reset current score, multipier and seconds
         ResetCurrentVariables();
+
+        // Change image and buttons scores
+        gameManager.IncreasePhase();
+
+        // Cover all cards 
+        sbangButton.ResetList();
+    }
+
+    internal bool Skip()
+    {
+        if (sbangButton.skip)
+            return true;
+
+        return false;
+    }
+
+    private IEnumerator FadingCoveredImages(Image _card)
+    {
+        Color newColor = _card.color;
+
+        while (newColor.a > 0)
+        {
+            newColor.a -= Time.deltaTime;
+            _card.color = newColor;
+            yield return null;
+        }
+
+        newColor.a = 1;
+        _card.color = newColor;
+        _card.gameObject.SetActive(false);
+
+        sbangButton.canSkip = true;
     }
 
     private void ResetCurrentVariables()
     {
+        gameManager.feedbackIsActive = false;
+
         currentScoreText.currentScore = 0;
         currentScoreText.GetComponent<Text>().text = currentScoreText.currentScore.ToString();
         
@@ -151,6 +212,8 @@ public class ButtonAnswer : MonoBehaviour
 
         timeBarText.currentSeconds = timeBarText.maxSeconds;
         timeBarText.GetComponent<Text>().text = "0." + timeBarText.maxSeconds.ToString() + "s";
+        
+        timeBarText.currentSeconds = 30;
         timeBarText.StopTimer();
     }
 }
