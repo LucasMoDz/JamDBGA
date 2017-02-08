@@ -21,6 +21,8 @@ public class RemoveCard : MonoBehaviour
 
     internal bool isClicked = true;
 
+    private bool nextButtonIsClicked;
+
     private void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -62,8 +64,11 @@ public class RemoveCard : MonoBehaviour
     public void RemovingCard()
     {
         if (gameManager.feedbackIsActive && canSkip)
+        {
             skip = true;
-
+            nextButtonIsClicked = true;
+        }
+           
         else if (cardList.Count > 1 && !gameManager.feedbackIsActive)
         {
             if (isClicked)
@@ -79,44 +84,58 @@ public class RemoveCard : MonoBehaviour
             cardList[randomIndex].gameObject.SetActive(false);
             cardList.RemoveAt(randomIndex);
         }
-
-        myText.text = "Break";
     }
 
     public void SetText()
     {
+        nextButtonIsClicked = false;
         myText.text = "Next";
-
         StartCoroutine(SetTextCO(myText));
     }
 
     private IEnumerator SetTextCO(Text _text)
     {
         float step = 0;
-
-        int randomValue = Random.Range(1, 101);
-
+        
         Quaternion currentRotation = _text.transform.rotation;
-        Quaternion targetRotation = currentRotation * new Quaternion(0, 0, randomValue > 50 ? 0.2f : -0.2f, 1);
-
+        
         Vector3 currentScale = Vector3.one;
         Vector3 targetScale = new Vector3(1.5f, 1.5f, 1.5f);
+        Quaternion targetRotation;
 
-        while (step < 1)
+        while (!NextButtonIsClicked())
         {
-            step += Time.deltaTime / 1.5f;
-            _text.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, step);
-            _text.transform.localScale = Vector3.Lerp(currentScale, targetScale, step);
+            int randomValue = Random.Range(1, 101);
+            targetRotation = currentRotation * new Quaternion(0, 0, randomValue > 50 ? 0.2f : -0.2f, 1);
+
+            while (step < 1)
+            {
+                step += Time.deltaTime / 1.5f;
+                _text.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, step);
+                _text.transform.localScale = Vector3.Lerp(currentScale, targetScale, step);
+                yield return null;
+            }
+
+            while (step > 0)
+            {
+                step -= Time.deltaTime / 0.5f;
+                _text.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, step);
+                _text.transform.localScale = Vector3.Lerp(currentScale, targetScale, step);
+                yield return null;
+            }
+
             yield return null;
         }
 
-        while (step > 0)
-        {
-            step -= Time.deltaTime / 0.5f;
-            _text.transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, step);
-            _text.transform.localScale = Vector3.Lerp(currentScale, targetScale, step);
-            yield return null;
-        }
+        myText.text = "Break";
+    }
+
+    private bool NextButtonIsClicked()
+    {
+        if (nextButtonIsClicked)
+            return true;
+
+        return false;
     }
 
     private void ResetSkip()
