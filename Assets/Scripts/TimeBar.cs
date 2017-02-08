@@ -35,7 +35,7 @@ public class TimeBar : MonoBehaviour
         while (currentSeconds > 0)
         {
             currentSeconds--;
-            secondsText.text = "0." + currentSeconds + "s";
+            secondsText.text = currentSeconds + "s";
             yield return new WaitForSecondsRealtime(1);
         }
 

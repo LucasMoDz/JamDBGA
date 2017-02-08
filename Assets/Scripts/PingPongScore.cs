@@ -26,7 +26,7 @@ public class PingPongScore : MonoBehaviour
         float step = 0;
         
         Vector3 currentScale = Vector3.one;
-        Vector3 targetScale = new Vector3(1.3f, 1.3f, 1.3f);
+        Vector3 targetScale = new Vector3(1.5f, 1.5f, 1.5f);
 
         while (true)
         {
