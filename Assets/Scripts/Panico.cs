@@ -8,9 +8,9 @@ public class Panico : MonoBehaviour
     public GameObject panelRanks;
     public GameObject panelCredits;
 
-    public void ChangeScene()
+    public void ChangeScene(int scene)
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(scene);
     }
 
     public void Ranks()

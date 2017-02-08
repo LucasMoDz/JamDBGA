@@ -50,13 +50,64 @@ public class ButtonAnswer : MonoBehaviour
         StartCoroutine(FirstFadeCO(0.8f));
     }
 
+    public void TimeFinished()
+    {
+        if (gameManager.feedbackIsActive || sbangButton.isClicked)
+            return;
+
+        gameManager.feedbackIsActive = true;
+        timeBarText.StopTimer();
+
+        StartCoroutine(TimeFinishedCO(0.8f));
+    }
+
+    private IEnumerator TimeFinishedCO(float _seconds)
+    {
+        #region Fading score
+
+        buttonScoreText.text = score.ToString();
+        buttonScoreText.color = new Color(0, 1, 0, 0);
+        buttonScoreText.transform.position = sbangButton.transform.position + new Vector3(0, 70f, 0); ;
+
+        Color newColor = buttonScoreText.color;
+
+        while (newColor.a < 1)
+        {
+            newColor.a += Time.deltaTime;
+            buttonScoreText.color = newColor;
+            yield return null;
+        }
+
+        #endregion  
+
+        yield return new WaitForSecondsRealtime(_seconds);
+
+        #region Score button moves to current score
+
+        Vector3 currentPositionOfText = buttonScoreText.transform.position;
+        float step = 0;
+
+        while (step < 1)
+        {
+            step += Time.deltaTime / 1.5f;
+            buttonScoreText.transform.position = Vector2.Lerp(currentPositionOfText, totalScoreText.transform.position, step);
+            yield return null;
+        }
+
+        buttonScoreText.text = "";
+
+        #endregion
+
+        StartCoroutine(FinalPhaseCO());
+    }
+
     private IEnumerator FirstFadeCO(float _seconds)
     {
         #region Fading score
 
         buttonScoreText.text = score.ToString();
         buttonScoreText.color = new Color(0, 1, 0, 0);
-        buttonScoreText.transform.position = this.transform.position + new Vector3(0, 21f, 0);
+        buttonScoreText.transform.position = this.transform.position + new Vector3(0, 70f, 0);
 
         Color newColor = buttonScoreText.color;
 
@@ -75,7 +126,7 @@ public class ButtonAnswer : MonoBehaviour
 
         if (score.Equals(0))
         {
-            StartCoroutine(TimeFinishedCO(0.5f));
+            StartCoroutine(ScoreAnswerNullCO(0.5f));
             multiplierText.GetComponent<Text>().text = "x 0";
         }
         else
@@ -84,7 +135,7 @@ public class ButtonAnswer : MonoBehaviour
         #endregion
     }
 
-    private IEnumerator TimeFinishedCO(float _seconds)
+    private IEnumerator ScoreAnswerNullCO(float _seconds)
     {
         #region Score button moves to current score
 
