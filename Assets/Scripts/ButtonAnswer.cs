@@ -252,8 +252,11 @@ public class ButtonAnswer : MonoBehaviour
             yield return null;
         }
 
+        totalScoreText.particle.Play();
+
         totalScoreText.totalScore += currentScoreText.currentScore;
         totalScoreText.GetComponent<Text>().text = totalScoreText.totalScore.ToString();
+
         buttonScoreText.text = "";
 
         #endregion
