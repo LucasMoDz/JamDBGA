@@ -45,7 +45,9 @@ public class ButtonAnswer : MonoBehaviour
             return;
 
         gameManager.feedbackIsActive = true;
+
         gameManager.ColorAllButtons();
+        
 
         timeBarText.StopTimer();
 
@@ -270,6 +272,7 @@ public class ButtonAnswer : MonoBehaviour
 
         #endregion
 
+        gameManager.PlayAnswerSound(this);
         sbangButton.SetText();
 
         yield return new WaitUntil(Skip);

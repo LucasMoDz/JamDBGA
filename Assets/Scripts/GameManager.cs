@@ -5,7 +5,10 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public Text finalScoreText;
+
     public AudioClip clipVictory;
+    public AudioClip rightAnswer;
+    public AudioClip wrongAnswer;
 
     private AudioSource sourceFSX;
 
@@ -122,6 +125,18 @@ public class GameManager : MonoBehaviour
             StartCoroutine(ColorButtonCO(buttonAnswers[i]));
     }
 
+    internal void PlayAnswerSound(ButtonAnswer _buttonAnswer)
+    {
+        if (_buttonAnswer.score.Equals(0))
+            sourceFSX.PlayOneShot(wrongAnswer);
+
+        else if (_buttonAnswer.score.Equals(5))
+            sourceFSX.PlayOneShot(rightAnswer);
+
+        else if (_buttonAnswer.score.Equals(10))
+            sourceFSX.PlayOneShot(rightAnswer);
+    }
+    
     private IEnumerator ColorButtonCO(ButtonAnswer _buttonAnswer)
     {
         yield return new WaitForSecondsRealtime(0.8f);
@@ -130,11 +145,13 @@ public class GameManager : MonoBehaviour
 
         if (_buttonAnswer.score.Equals(0))
             newColor = Color.red;
+
         else if (_buttonAnswer.score.Equals(5))
             newColor = Color.yellow;
+
         else if (_buttonAnswer.score.Equals(10))
             newColor = Color.green;
-
+            
         Image buttonImage = _buttonAnswer.GetComponent<Image>();
         Color startColor = buttonImage.color;
 

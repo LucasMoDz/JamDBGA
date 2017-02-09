@@ -5,6 +5,8 @@ using System.Collections;
 public class TimeBar : MonoBehaviour
 {
     private ButtonAnswer buttonAnswer;
+    public AudioClip clipTime;
+    private AudioSource sourceFSX;
 
     public int maxSeconds = 30;
     internal int currentSeconds;
@@ -17,6 +19,8 @@ public class TimeBar : MonoBehaviour
         buttonAnswer = FindObjectOfType<ButtonAnswer>();
         secondsText = this.GetComponent<Text>();
         currentSeconds = maxSeconds;
+
+        sourceFSX = GameObject.FindGameObjectWithTag("FSX").GetComponent<AudioSource>();
     }
 
     public void StartTimeBar()
@@ -36,6 +40,10 @@ public class TimeBar : MonoBehaviour
         {
             currentSeconds--;
             secondsText.text = currentSeconds + "s";
+
+            if (currentSeconds == 2)
+                sourceFSX.PlayOneShot(clipTime);
+
             yield return new WaitForSecondsRealtime(1);
         }
 
