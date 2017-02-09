@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class RemoveCard : MonoBehaviour
 {
+    private Image[] indicatorImages = new Image[9];
+
     private Text myText;
 
     private GameManager gameManager;
@@ -22,7 +24,7 @@ public class RemoveCard : MonoBehaviour
     internal bool isClicked = true;
 
     private bool nextButtonIsClicked;
-
+    
     private void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -35,6 +37,11 @@ public class RemoveCard : MonoBehaviour
             Debug.LogError("\"Cards\" not found\n");
 
         myText = this.GetComponentInChildren<Text>();
+
+        GameObject indicator = GameObject.Find("IndicatorImages");
+
+        for (int i = 0; i < indicator.transform.childCount; i++)
+            indicatorImages[i] = indicator.transform.GetChild(i).GetComponent<Image>();
 
         InitialiseList();
     }
@@ -67,12 +74,15 @@ public class RemoveCard : MonoBehaviour
         {
             skip = true;
             nextButtonIsClicked = true;
+
+            Invoke("UpdateIndicator", 0.1f);
         }
            
         else if (cardList.Count > 1 && !gameManager.feedbackIsActive)
         {
             if (isClicked)
             {
+                indicatorImages[0].color = Color.black;
                 isClicked = false;
                 ResetSkip();
                 timeBar.StartTimeBar();
@@ -143,5 +153,11 @@ public class RemoveCard : MonoBehaviour
     {
         canSkip = false;
         skip = false;
+    }
+
+    private void UpdateIndicator()
+    {
+        for (int i = 0; i < gameManager.index; i++)
+            indicatorImages[i].color = Color.black;
     }
 }

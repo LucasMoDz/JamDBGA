@@ -5,6 +5,9 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public Text finalScoreText;
+    public AudioClip clipVictory;
+
+    private AudioSource sourceFSX;
 
     private ButtonAnswer[] buttonAnswers = new ButtonAnswer[6];
     private CanvasGroup canvasGroup;
@@ -57,6 +60,8 @@ public class GameManager : MonoBehaviour
 
         removeCardButton = FindObjectOfType<RemoveCard>();
 
+        sourceFSX = GameObject.FindGameObjectWithTag("FSX").GetComponent<AudioSource>();
+
         IncreasePhase();
     }
 
@@ -107,6 +112,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
+        sourceFSX.PlayOneShot(clipVictory);
         canvasGroup.alpha = 0.9f;
     }
 
