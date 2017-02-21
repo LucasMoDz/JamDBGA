@@ -322,7 +322,7 @@ public class ButtonAnswer : MonoBehaviour
         multiplierText.GetComponent<Text>().text = "x " + multiplierText.MAX_MULTIPLIER.ToString();
 
         timeBarText.currentSeconds = timeBarText.maxSeconds;
-        timeBarText.GetComponent<Text>().text = "0." + timeBarText.maxSeconds.ToString() + "s";
+        timeBarText.GetComponent<Text>().text = timeBarText.maxSeconds.ToString() + "s";
         
         timeBarText.currentSeconds = 30;
         timeBarText.StopTimer();
